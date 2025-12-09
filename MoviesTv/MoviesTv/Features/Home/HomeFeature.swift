@@ -7,7 +7,8 @@ struct HomeFeature {
     @ObservableState
     struct State: Equatable {
         var searchQuery: String = ""
-        var cards: IdentifiedArrayOf<CardFeature.State> = []
+        var tvShowCards: IdentifiedArrayOf<CardFeature.State> = []
+        var movieCards: IdentifiedArrayOf<CardFeature.State> = []
         var loadedTVShowsPage = 0
         var loadedMoviesPage = 0
     }
@@ -16,8 +17,11 @@ struct HomeFeature {
         case searchQueryChanged(String)
         case onAppear
         case loadMoreTVShows
-        case cardsLoaded([CardFeature.State])
-        case cards(IdentifiedActionOf<CardFeature>)
+        case loadMoreMovies
+        case tvShowCardsLoaded([CardFeature.State])
+        case movieCardsLoaded([CardFeature.State])
+        case tvShowCards(IdentifiedActionOf<CardFeature>)
+        case movieCards(IdentifiedActionOf<CardFeature>)
     }
 
     var body: some Reducer<State, Action> {
@@ -29,7 +33,10 @@ struct HomeFeature {
 
             case .onAppear:
                 guard state.loadedTVShowsPage == 0 else { return .none }
-                return .send(.loadMoreTVShows)
+                return .run { send in
+                    await send(.loadMoreTVShows)
+                    await send(.loadMoreMovies)
+                }
 
             case .loadMoreTVShows:
                 let nextPage = state.loadedTVShowsPage + 1
@@ -45,22 +52,51 @@ struct HomeFeature {
                             )
                         }
 
-                        send(.cardsLoaded(cards))
+                        send(.tvShowCardsLoaded(cards))
                     } catch {
                         print("Error fetching TV shows: \(error)")
                     }
                 }
 
-            case let .cardsLoaded(cards):
-                state.cards.append(contentsOf: cards)
+            case .loadMoreMovies:
+                let nextPage = state.loadedMoviesPage + 1
+                return .run {@MainActor [tmdbClient] send in
+                    do {
+                        let response = try await tmdbClient.fetchPopularMovies(nextPage)
+                        
+                        let cards = response.results.map { movie in
+                            CardFeature.State(
+                                id: movie.id,
+                                title: movie.title,
+                                coverImagePath: movie.posterPath ?? ""
+                            )
+                        }
+                        
+                        send(.movieCardsLoaded(cards))
+                    }
+                    catch {
+                        print("Error fetching movies: \(error)")
+                    }
+                }
+                
+            case let .tvShowCardsLoaded(cards):
+                state.tvShowCards.append(contentsOf: cards)
                 state.loadedTVShowsPage += 1
                 return .none
 
-            case .cards:
+            case let .movieCardsLoaded(cards):
+                state.movieCards.append(contentsOf: cards)
+                state.loadedMoviesPage += 1
+                return .none
+                
+            case .tvShowCards, .movieCards:
                 return .none
             }
         }
-        .forEach(\.cards, action: \.cards) {
+        .forEach(\.tvShowCards, action: \.tvShowCards) {
+            CardFeature()
+        }
+        .forEach(\.movieCards, action: \.movieCards) {
             CardFeature()
         }
     }

@@ -1,23 +1,26 @@
 import SwiftUI
 import ComposableArchitecture
+import Kingfisher
 
 struct CardView: View {
     @Bindable var store: StoreOf<CardFeature>
     
     var body: some View {
-        AsyncImage(url: store.state.coverUrl) { phase in
-            switch phase {
-            case .empty:
-                ProgressView()
-            case .success(let image):
-                loadedImageView(image)
-                    .onTapGesture {
-                        store.send(.openDetails(id: store.id))
-                    }
-            default:
-                errorView
+        ZStack(alignment: .bottom) {
+            KFImage(store.coverUrl)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .clipShape(RoundedRectangle(cornerRadius: 20))
+            HStack {
+                Spacer()
+                Text(store.state.title)
+                    .font(.headline)
+                    .foregroundStyle(.primary)
+                Spacer()
             }
+            .background(.regularMaterial)
         }
+        .frame(width: 200, height: 300)
     }
 }
 

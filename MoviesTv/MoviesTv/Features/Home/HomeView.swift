@@ -19,6 +19,7 @@ struct HomeView: View {
                 store.send(.onAppear)
             }
         }
+        .searchable(text: $store.searchQuery.sending(\.searchQueryChanged), prompt: "Search items")
     }
 }
 

@@ -6,7 +6,7 @@ struct HomeFeature {
 
     @ObservableState
     struct State: Equatable {
-        var searchQuery: String = ""
+        var searchQuery: String = .init()
         var tvShowCards: IdentifiedArrayOf<CardFeature.State> = []
         var movieCards: IdentifiedArrayOf<CardFeature.State> = []
         var loadedTVShowsPage = 0

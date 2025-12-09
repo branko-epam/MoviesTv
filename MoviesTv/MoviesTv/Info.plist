@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>MDB_IMG_URL</key>
+	<string>https://image.tmdb.org/t/p/w500</string>
 	<key>MDB_BASE_URL</key>
 	<string>https://api.themoviedb.org/3</string>
 	<key>MDB_READ_API_KEY</key>

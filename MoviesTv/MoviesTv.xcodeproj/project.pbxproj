@@ -14,9 +14,22 @@
 		B9509DC32EE827D600FC11F0 /* MoviesTv.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MoviesTv.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B9509DD72EE831E200FC11F0 /* Exceptions for "MoviesTv" folder in "MoviesTv" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = B9509DC22EE827D600FC11F0 /* MoviesTv */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B9509DC52EE827D600FC11F0 /* MoviesTv */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B9509DD72EE831E200FC11F0 /* Exceptions for "MoviesTv" folder in "MoviesTv" target */,
+			);
 			path = MoviesTv;
 			sourceTree = "<group>";
 		};
@@ -136,6 +149,8 @@
 /* Begin XCBuildConfiguration section */
 		B9509DCC2EE827D600FC11F0 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = B9509DC52EE827D600FC11F0 /* MoviesTv */;
+			baseConfigurationReferenceRelativePath = Keys.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -197,6 +212,8 @@
 		};
 		B9509DCD2EE827D600FC11F0 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = B9509DC52EE827D600FC11F0 /* MoviesTv */;
+			baseConfigurationReferenceRelativePath = Keys.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -250,6 +267,8 @@
 		};
 		B9509DCF2EE827D600FC11F0 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = B9509DC52EE827D600FC11F0 /* MoviesTv */;
+			baseConfigurationReferenceRelativePath = Keys.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -259,6 +278,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MoviesTv/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -292,6 +312,8 @@
 		};
 		B9509DD02EE827D600FC11F0 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = B9509DC52EE827D600FC11F0 /* MoviesTv */;
+			baseConfigurationReferenceRelativePath = Keys.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -301,6 +323,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MoviesTv/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;

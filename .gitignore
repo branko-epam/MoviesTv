@@ -65,3 +65,5 @@ CLAUDE.md
 xcshareddata
 *.xcworkspacedata
 *.xcworkspace
+Keys.xcconfig
+.DS_Store

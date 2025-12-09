@@ -7,18 +7,28 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                if store.cards.isEmpty {
-                    ProgressView("Loading...")
-                } else {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 16) {
-                            ForEach(store.scope(state: \.cards, action: \.cards)) { cardStore in
-                                CardView(store: cardStore)
+                List {
+                    Section("Trending TV Shows") {
+                        if store.cards.isEmpty {
+                            ProgressView("Loading...")
+                        } else {
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 16) {
+                                    ForEach(store.scope(state: \.cards, action: \.cards)) { cardStore in
+                                        CardView(store: cardStore)
+                                            .onAppear {
+                                                if cardStore.id == store.cards.last?.id {
+                                                    store.send(.loadMoreTVShows)
+                                                }
+                                            }
+                                    }
+                                }
+                                .padding(.horizontal)
                             }
                         }
-                        .padding(.horizontal)
                     }
                 }
+                .listStyle(.plain)
             }
             .navigationTitle("Home")
             .onAppear {

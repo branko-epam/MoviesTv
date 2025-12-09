@@ -2,15 +2,20 @@ import ComposableArchitecture
 
 @Reducer
 struct HomeFeature {
+    @Dependency(\.tmdbClient) var tmdbClient
+
     @ObservableState
     struct State: Equatable {
         var searchQuery: String = ""
         var cards: IdentifiedArrayOf<CardFeature.State> = []
+        var loadedTVShowsPage = 0
+        var loadedMoviesPage = 0
     }
 
     enum Action {
         case searchQueryChanged(String)
         case onAppear
+        case loadMoreTVShows
         case cardsLoaded([CardFeature.State])
         case cards(IdentifiedActionOf<CardFeature>)
     }
@@ -23,32 +28,32 @@ struct HomeFeature {
                 return .none
 
             case .onAppear:
-                return .run { send in
-                    try await Task.sleep(for: .seconds(1))
+                guard state.loadedTVShowsPage == 0 else { return .none }
+                return .send(.loadMoreTVShows)
 
-                    let mockCards = [
-                        CardFeature.State(
-                            id: 66732,
-                            title: "Stranger Things",
-                            coverImagePath: "/cVxVGwHce6xnW8UaVUggaPXbmoE.jpg"
-                        ),
-                        CardFeature.State(
-                            id: 1399,
-                            title: "Game of Thrones",
-                            coverImagePath: "/1XS1oqL89opfnbLl8WnZY1O1uJx.jpg"
-                        ),
-                        CardFeature.State(
-                            id: 1396,
-                            title: "Breaking Bad",
-                            coverImagePath: "/ztkUQFLlC19CCMYHW9o1zWhJRNq.jpg"
-                        )
-                    ]
+            case .loadMoreTVShows:
+                let nextPage = state.loadedTVShowsPage + 1
+                return .run {@MainActor [tmdbClient] send in
+                    do {
+                        let response = try await tmdbClient.fetchPopularTVShows(nextPage)
 
-                    await send(.cardsLoaded(mockCards))
+                        let cards = response.results.map { tvShow in
+                            CardFeature.State(
+                                id: tvShow.id,
+                                title: tvShow.name,
+                                coverImagePath: tvShow.posterPath ?? ""
+                            )
+                        }
+
+                        send(.cardsLoaded(cards))
+                    } catch {
+                        print("Error fetching TV shows: \(error)")
+                    }
                 }
 
             case let .cardsLoaded(cards):
-                state.cards = IdentifiedArray(uniqueElements: cards)
+                state.cards.append(contentsOf: cards)
+                state.loadedTVShowsPage += 1
                 return .none
 
             case .cards:

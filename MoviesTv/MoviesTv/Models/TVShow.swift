@@ -1,6 +1,6 @@
 import Foundation
 
-struct TVShow: Codable, Identifiable, Equatable {
+struct TVShow: Identifiable, Equatable, @unchecked Sendable {
     let adult: Bool
     let backdropPath: String?
     let genreIds: [Int]
@@ -15,7 +15,9 @@ struct TVShow: Codable, Identifiable, Equatable {
     let name: String
     let voteAverage: Double
     let voteCount: Int
+}
 
+extension TVShow: Codable {
     enum CodingKeys: String, CodingKey {
         case adult
         case backdropPath = "backdrop_path"

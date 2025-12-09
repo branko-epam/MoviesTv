@@ -1,6 +1,6 @@
 import Foundation
 
-struct TMDBResponse<T: Codable>: Codable {
+struct TMDBResponse<T: Codable>: Codable, @unchecked Sendable {
     let page: Int
     let results: [T]
     let totalPages: Int

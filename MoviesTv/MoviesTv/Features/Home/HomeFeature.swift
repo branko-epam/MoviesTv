@@ -80,7 +80,8 @@ struct HomeFeature {
                                 title: tvShow.name,
                                 coverImagePath: tvShow.posterPath ?? "",
                                 overview: tvShow.overview,
-                                rating: tvShow.voteAverage
+                                rating: tvShow.voteAverage,
+                                sizeClass: .large
                             )
                         }
 
@@ -108,7 +109,8 @@ struct HomeFeature {
                                 title: movie.title,
                                 coverImagePath: movie.posterPath ?? "",
                                 overview: movie.overview,
-                                rating: movie.voteAverage
+                                rating: movie.voteAverage,
+                                sizeClass: .large
                             )
                         }
 

@@ -4,7 +4,7 @@ import Kingfisher
 
 struct CardView: View {
     @Bindable var store: StoreOf<CardFeature>
-    
+
     var body: some View {
         ZStack(alignment: .bottom) {
             KFImage(store.coverUrl)
@@ -20,7 +20,7 @@ struct CardView: View {
             }
             .background(.regularMaterial)
         }
-        .frame(width: 200, height: 300)
+        .frame(width: store.sizeClass.width, height: store.sizeClass.height)
         .onTapGesture {
             store.send(.openDetails(id: store.id))
         }
@@ -63,7 +63,8 @@ extension CardView {
                 title: "Stranger Things",
                 coverImagePath: "/cVxVGwHce6xnW8UaVUggaPXbmoE.jpg",
                 overview: "When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and one strange little girl.",
-                rating: 8.6
+                rating: 8.6,
+                sizeClass: .large
             )
         ) {
             CardFeature()

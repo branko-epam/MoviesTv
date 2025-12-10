@@ -21,6 +21,9 @@ struct CardView: View {
             .background(.regularMaterial)
         }
         .frame(width: 200, height: 300)
+        .onTapGesture {
+            store.send(.openDetails(id: store.id))
+        }
     }
 }
 

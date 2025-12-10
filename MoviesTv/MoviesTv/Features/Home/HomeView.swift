@@ -28,6 +28,11 @@ struct HomeView: View {
             }
         }
         .searchable(text: $store.searchQuery.sending(\.searchQueryChanged), prompt: "Search items")
+        .sheet(item: $store.scope(state: \.details, action: \.details)) { detailsStore in
+            NavigationStack {
+                DetailsView(store: detailsStore)
+            }
+        }
     }
 }
 

@@ -12,6 +12,7 @@ struct HomeFeature {
         var loadedTVShowsPage = 0
         var loadedMoviesPage = 0
         var keywords = KeywordsFeature.State()
+        @Presents var details: DetailsFeature.State?
     }
 
     enum Action {
@@ -26,6 +27,7 @@ struct HomeFeature {
         case loadKeywords
         case keywordsLoaded(KeywordsFeature.State)
         case keywords(KeywordsFeature.Action)
+        case details(PresentationAction<DetailsFeature.Action>)
     }
 
     var body: some Reducer<State, Action> {
@@ -123,6 +125,30 @@ struct HomeFeature {
                 state.loadedMoviesPage += 1
                 return .none
                 
+            case let .tvShowCards(.element(id: id, action: .openDetails)):
+                guard let tvShow = state.tvShowCards[id: id] else { return .none }
+                state.details = DetailsFeature.State(
+                    id: tvShow.id,
+                    mediaType: .tvShow,
+                    title: tvShow.title,
+                    posterPath: tvShow.coverImagePath,
+                    rating: 0.0,
+                    overview: ""
+                )
+                return .none
+
+            case let .movieCards(.element(id: id, action: .openDetails)):
+                guard let movie = state.movieCards[id: id] else { return .none }
+                state.details = DetailsFeature.State(
+                    id: movie.id,
+                    mediaType: .movie,
+                    title: movie.title,
+                    posterPath: movie.coverImagePath,
+                    rating: 0.0,
+                    overview: ""
+                )
+                return .none
+
             case .tvShowCards, .movieCards:
                 return .none
             case .loadKeywords:
@@ -156,6 +182,13 @@ struct HomeFeature {
 
             case .keywords:
                 return .none
+
+            case .details(.presented(.dismiss)):
+                state.details = nil
+                return .none
+
+            case .details:
+                return .none
             }
         }
         .forEach(\.tvShowCards, action: \.tvShowCards) {
@@ -163,6 +196,9 @@ struct HomeFeature {
         }
         .forEach(\.movieCards, action: \.movieCards) {
             CardFeature()
+        }
+        .ifLet(\.$details, action: \.details) {
+            DetailsFeature()
         }
     }
 }

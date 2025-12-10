@@ -26,6 +26,8 @@ struct DetailsFeature {
     enum Action: Equatable {
         case onAppear
         case castLoaded([CastMember])
+        case trailerLoaded(String?)
+        case reviewsLoaded([Review])
         case dismiss
     }
 
@@ -36,22 +38,70 @@ struct DetailsFeature {
                 let mediaId = state.id
                 let mediaType = state.mediaType
                 return .run { @MainActor [tmdbClient] send in
-                    do {
-                        let response: CreditsResponse
-                        switch mediaType {
-                        case .movie:
-                            response = try await tmdbClient.fetchMovieCredits(mediaId)
-                        case .tvShow:
-                            response = try await tmdbClient.fetchTVShowCredits(mediaId)
+                    async let creditsTask: Void = {
+                        do {
+                            let response: CreditsResponse
+                            switch mediaType {
+                            case .movie:
+                                response = try await tmdbClient.fetchMovieCredits(mediaId)
+                            case .tvShow:
+                                response = try await tmdbClient.fetchTVShowCredits(mediaId)
+                            }
+                            await send(.castLoaded(response.cast))
+                        } catch {
+                            print("Error fetching cast: \(error)")
                         }
-                        send(.castLoaded(response.cast))
-                    } catch {
-                        print("Error fetching cast: \(error)")
-                    }
+                    }()
+
+                    async let videosTask: Void = {
+                        do {
+                            let response: VideosResponse
+                            switch mediaType {
+                            case .movie:
+                                response = try await tmdbClient.fetchMovieVideos(mediaId)
+                            case .tvShow:
+                                response = try await tmdbClient.fetchTVShowVideos(mediaId)
+                            }
+
+                            let trailer = response.results.first { video in
+                                video.site == "YouTube" && video.type == "Trailer" && video.official
+                            }
+                            await send(.trailerLoaded(trailer?.key))
+                        } catch {
+                            print("Error fetching videos: \(error)")
+                        }
+                    }()
+
+                    async let reviewsTask: Void = {
+                        do {
+                            let response: ReviewsResponse
+                            switch mediaType {
+                            case .movie:
+                                response = try await tmdbClient.fetchMovieReviews(mediaId)
+                            case .tvShow:
+                                response = try await tmdbClient.fetchTVShowReviews(mediaId)
+                            }
+                            await send(.reviewsLoaded(response.results))
+                        } catch {
+                            print("Error fetching reviews: \(error)")
+                        }
+                    }()
+
+                    await creditsTask
+                    await videosTask
+                    await reviewsTask
                 }
 
             case let .castLoaded(cast):
                 state.cast = cast
+                return .none
+
+            case let .trailerLoaded(trailerKey):
+                state.trailerKey = trailerKey
+                return .none
+
+            case let .reviewsLoaded(reviews):
+                state.reviews = reviews
                 return .none
 
             case .dismiss:

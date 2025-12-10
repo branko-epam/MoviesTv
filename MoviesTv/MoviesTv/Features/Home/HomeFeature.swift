@@ -78,7 +78,9 @@ struct HomeFeature {
                             CardFeature.State(
                                 id: tvShow.id,
                                 title: tvShow.name,
-                                coverImagePath: tvShow.posterPath ?? ""
+                                coverImagePath: tvShow.posterPath ?? "",
+                                overview: tvShow.overview,
+                                rating: tvShow.voteAverage
                             )
                         }
 
@@ -104,7 +106,9 @@ struct HomeFeature {
                             CardFeature.State(
                                 id: movie.id,
                                 title: movie.title,
-                                coverImagePath: movie.posterPath ?? ""
+                                coverImagePath: movie.posterPath ?? "",
+                                overview: movie.overview,
+                                rating: movie.voteAverage
                             )
                         }
 
@@ -132,8 +136,8 @@ struct HomeFeature {
                     mediaType: .tvShow,
                     title: tvShow.title,
                     posterPath: tvShow.coverImagePath,
-                    rating: 0.0,
-                    overview: ""
+                    rating: tvShow.rating,
+                    overview: tvShow.overview
                 )
                 return .none
 
@@ -144,8 +148,8 @@ struct HomeFeature {
                     mediaType: .movie,
                     title: movie.title,
                     posterPath: movie.coverImagePath,
-                    rating: 0.0,
-                    overview: ""
+                    rating: movie.rating,
+                    overview: movie.overview
                 )
                 return .none
 

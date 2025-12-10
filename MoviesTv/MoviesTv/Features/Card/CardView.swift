@@ -61,7 +61,9 @@ extension CardView {
             initialState: CardFeature.State(
                 id: 66732,
                 title: "Stranger Things",
-                coverImagePath: "/cVxVGwHce6xnW8UaVUggaPXbmoE.jpg"
+                coverImagePath: "/cVxVGwHce6xnW8UaVUggaPXbmoE.jpg",
+                overview: "When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and one strange little girl.",
+                rating: 8.6
             )
         ) {
             CardFeature()

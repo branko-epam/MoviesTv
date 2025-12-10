@@ -138,20 +138,18 @@ extension DetailsView {
                                         image
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
-                                            .frame(width: 80, height: 80)
                                             .clipShape(Circle())
                                     case .failure, .empty:
                                         Circle()
                                             .fill(Color.gray)
-                                            .frame(width: 80, height: 80)
                                     @unknown default:
                                         EmptyView()
                                     }
                                 }
+                                .frame(width: 80, height: 80)
                             } else {
                                 Circle()
                                     .fill(Color.gray)
-                                    .frame(width: 80, height: 80)
                             }
 
                             Text(member.name)

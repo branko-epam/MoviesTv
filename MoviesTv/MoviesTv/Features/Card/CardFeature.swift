@@ -8,6 +8,8 @@ struct CardFeature {
         let id: Int
         let title: String
         let coverImagePath: String
+        let overview: String
+        let rating: Double
         var coverUrl: URL? {
             guard let baseUrl = Bundle.main.infoDictionary?["MDB_IMG_URL"] as? String else {
                 return nil
@@ -24,7 +26,6 @@ struct CardFeature {
         Reduce { state, action in
             switch action {
             case .openDetails(let id):
-                print("@@@ openDetails(\(id))")
                 return .none
             }
         }

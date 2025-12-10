@@ -8,6 +8,10 @@ struct TMDBClient {
     var discoverTVShows: (Int, Int) async throws -> TMDBResponse<TVShow>
     var fetchMovieCredits: (Int) async throws -> CreditsResponse
     var fetchTVShowCredits: (Int) async throws -> CreditsResponse
+    var fetchMovieVideos: (Int) async throws -> VideosResponse
+    var fetchTVShowVideos: (Int) async throws -> VideosResponse
+    var fetchMovieReviews: (Int) async throws -> ReviewsResponse
+    var fetchTVShowReviews: (Int) async throws -> ReviewsResponse
 }
 
 extension TMDBClient {
@@ -32,6 +36,18 @@ extension TMDBClient {
         },
         fetchTVShowCredits: { tvShowId in
             try await creditsRequest(endpoint: "tv/\(tvShowId)/credits")
+        },
+        fetchMovieVideos: { movieId in
+            try await videosRequest(endpoint: "movie/\(movieId)/videos")
+        },
+        fetchTVShowVideos: { tvShowId in
+            try await videosRequest(endpoint: "tv/\(tvShowId)/videos")
+        },
+        fetchMovieReviews: { movieId in
+            try await reviewsRequest(endpoint: "movie/\(movieId)/reviews")
+        },
+        fetchTVShowReviews: { tvShowId in
+            try await reviewsRequest(endpoint: "tv/\(tvShowId)/reviews")
         }
     )
 
@@ -188,6 +204,81 @@ extension TMDBClient {
         }
 
         return try JSONDecoder().decode(CreditsResponse.self, from: data)
+    }
+
+    private static func videosRequest(endpoint: String) async throws -> VideosResponse {
+        guard let baseUrl = Bundle.main.infoDictionary?["MDB_BASE_URL"] as? String,
+              let token = Bundle.main.infoDictionary?["MDB_READ_API_KEY"] as? String else {
+            throw TMDBError.missingConfiguration
+        }
+
+        guard !token.isEmpty else {
+            throw TMDBError.missingConfiguration
+        }
+
+        guard let url = URL(string: "\(baseUrl)/\(endpoint)") else {
+            throw TMDBError.invalidURL
+        }
+
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
+        components.queryItems = [
+            URLQueryItem(name: "language", value: "en-US")
+        ]
+
+        var request = URLRequest(url: components.url!)
+        request.httpMethod = "GET"
+        request.timeoutInterval = 10
+        request.allHTTPHeaderFields = [
+            "accept": "application/json",
+            "Authorization": "Bearer \(token)"
+        ]
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              (200...299).contains(httpResponse.statusCode) else {
+            throw TMDBError.httpError
+        }
+
+        return try JSONDecoder().decode(VideosResponse.self, from: data)
+    }
+
+    private static func reviewsRequest(endpoint: String) async throws -> ReviewsResponse {
+        guard let baseUrl = Bundle.main.infoDictionary?["MDB_BASE_URL"] as? String,
+              let token = Bundle.main.infoDictionary?["MDB_READ_API_KEY"] as? String else {
+            throw TMDBError.missingConfiguration
+        }
+
+        guard !token.isEmpty else {
+            throw TMDBError.missingConfiguration
+        }
+
+        guard let url = URL(string: "\(baseUrl)/\(endpoint)") else {
+            throw TMDBError.invalidURL
+        }
+
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
+        components.queryItems = [
+            URLQueryItem(name: "language", value: "en-US"),
+            URLQueryItem(name: "page", value: "1")
+        ]
+
+        var request = URLRequest(url: components.url!)
+        request.httpMethod = "GET"
+        request.timeoutInterval = 10
+        request.allHTTPHeaderFields = [
+            "accept": "application/json",
+            "Authorization": "Bearer \(token)"
+        ]
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              (200...299).contains(httpResponse.statusCode) else {
+            throw TMDBError.httpError
+        }
+
+        return try JSONDecoder().decode(ReviewsResponse.self, from: data)
     }
 }
 

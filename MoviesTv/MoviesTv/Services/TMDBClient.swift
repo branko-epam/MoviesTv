@@ -2,7 +2,11 @@ import Foundation
 
 struct TMDBClient {
     var fetchPopularMovies: (Int) async throws -> TMDBResponse<Movie>
+    var fetchNowPlayingMovies: (Int) async throws -> TMDBResponse<Movie>
+    var fetchTopRatedMovies: (Int) async throws -> TMDBResponse<Movie>
     var fetchPopularTVShows: (Int) async throws -> TMDBResponse<TVShow>
+    var fetchOnTheAirTVShows: (Int) async throws -> TMDBResponse<TVShow>
+    var fetchTopRatedTVShows: (Int) async throws -> TMDBResponse<TVShow>
     var searchKeyword: (String, Int) async throws -> TMDBResponse<SearchKeyword>
     var discoverMovies: (Int, Int) async throws -> TMDBResponse<Movie>
     var discoverTVShows: (Int, Int) async throws -> TMDBResponse<TVShow>
@@ -19,8 +23,20 @@ extension TMDBClient {
         fetchPopularMovies: { page in
             try await request(endpoint: "movie/popular", page: page)
         },
+        fetchNowPlayingMovies: { page in
+            try await request(endpoint: "movie/now_playing", page: page)
+        },
+        fetchTopRatedMovies: { page in
+            try await request(endpoint: "movie/top_rated", page: page)
+        },
         fetchPopularTVShows: { page in
             try await request(endpoint: "tv/popular", page: page)
+        },
+        fetchOnTheAirTVShows: { page in
+            try await request(endpoint: "tv/on_the_air", page: page)
+        },
+        fetchTopRatedTVShows: { page in
+            try await request(endpoint: "tv/top_rated", page: page)
         },
         searchKeyword: { query, page in
             try await searchRequest(endpoint: "search/keyword", query: query, page: page)

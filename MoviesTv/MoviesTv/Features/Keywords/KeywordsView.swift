@@ -2,7 +2,7 @@ import SwiftUI
 import ComposableArchitecture
 
 struct KeywordsView: View {
-    @Bindable var store: StoreOf<KeyKeywordsFeature>
+    @Bindable var store: StoreOf<KeywordsFeature>
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -42,7 +42,7 @@ struct KeywordPill: View {
 #Preview {
     KeywordsView(
         store: Store(
-            initialState: KeyKeywordsFeature.State(
+            initialState: KeywordsFeature.State(
                 keywords: [
                     SearchKeyword(id: 1, name: "Action"),
                     SearchKeyword(id: 2, name: "Comedy"),
@@ -52,7 +52,7 @@ struct KeywordPill: View {
                 selectedKeyword: SearchKeyword(id: 1, name: "Action")
             )
         ) {
-            KeyKeywordsFeature()
+            KeywordsFeature()
         }
     )
 }

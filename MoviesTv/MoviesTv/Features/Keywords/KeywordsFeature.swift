@@ -2,7 +2,7 @@ import Foundation
 import ComposableArchitecture
 
 @Reducer
-struct KeyKeywordsFeature {
+struct KeywordsFeature {
     @ObservableState
     struct State: Equatable {
         var keywords: [SearchKeyword] = []

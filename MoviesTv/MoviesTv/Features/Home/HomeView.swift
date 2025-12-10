@@ -6,7 +6,12 @@ struct HomeView: View {
 
     var body: some View {
         NavigationStack {
-            VStack {
+            VStack(spacing: 0) {
+                if !store.keywords.keywords.isEmpty {
+                    KeywordsView(store: store.scope(state: \.keywords, action: \.keywords))
+                        .padding(.vertical, 8)
+                }
+
                 List {
                     tvShowSection
                     movieSection
@@ -14,6 +19,9 @@ struct HomeView: View {
                 }
                 .listStyle(.plain)
             }
+            .animation(.default, value: store.movieCards)
+            .animation(.default, value: store.tvShowCards)
+            .animation(.default, value: store.keywords)
             .navigationTitle("Home")
             .onAppear {
                 store.send(.onAppear)
@@ -32,7 +40,7 @@ extension HomeView {
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHStack(spacing: 16) {
-                        ForEach(store.scope(state: \.tvShowCards, action: \.tvShowCards)) { cardStore in
+                        ForEach(Array(store.scope(state: \.tvShowCards, action: \.tvShowCards))) { cardStore in
                             CardView(store: cardStore)
                                 .onAppear {
                                     if cardStore.id == store.tvShowCards.last?.id {
@@ -55,7 +63,7 @@ extension HomeView {
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHStack(spacing: 16) {
-                        ForEach(store.scope(state: \.movieCards, action: \.movieCards)) { cardStore in
+                        ForEach(Array(store.scope(state: \.movieCards, action: \.movieCards))) { cardStore in
                             CardView(store: cardStore)
                                 .onAppear {
                                     if cardStore.id == store.movieCards.last?.id {

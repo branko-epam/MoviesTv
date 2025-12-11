@@ -81,7 +81,8 @@ struct HomeFeature {
                                 coverImagePath: tvShow.posterPath ?? "",
                                 overview: tvShow.overview,
                                 rating: tvShow.voteAverage,
-                                sizeClass: .large
+                                sizeClass: .large,
+                                mediaType: .tvShow
                             )
                         }
 
@@ -110,7 +111,8 @@ struct HomeFeature {
                                 coverImagePath: movie.posterPath ?? "",
                                 overview: movie.overview,
                                 rating: movie.voteAverage,
-                                sizeClass: .large
+                                sizeClass: .large,
+                                mediaType: .movie
                             )
                         }
 

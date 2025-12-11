@@ -30,5 +30,8 @@ struct AppView: View {
                 }
                 .tag(AppFeature.Tab.favorites)
         }
+        .onAppear {
+            store.send(.onAppear)
+        }
     }
 }

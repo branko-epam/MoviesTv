@@ -16,6 +16,9 @@ struct TMDBClient {
     var fetchTVShowVideos: (Int) async throws -> VideosResponse
     var fetchMovieReviews: (Int) async throws -> ReviewsResponse
     var fetchTVShowReviews: (Int) async throws -> ReviewsResponse
+    var fetchAccount: () async throws -> Account
+    var fetchFavoriteMovies: (Int, Int) async throws -> TMDBResponse<Movie>
+    var fetchFavoriteTVShows: (Int, Int) async throws -> TMDBResponse<TVShow>
 }
 
 extension TMDBClient {
@@ -64,6 +67,15 @@ extension TMDBClient {
         },
         fetchTVShowReviews: { tvShowId in
             try await reviewsRequest(endpoint: "tv/\(tvShowId)/reviews")
+        },
+        fetchAccount: {
+            try await accountRequest()
+        },
+        fetchFavoriteMovies: { accountId, page in
+            try await favoritesRequest(endpoint: "account/\(accountId)/favorite/movies", page: page)
+        },
+        fetchFavoriteTVShows: { accountId, page in
+            try await favoritesRequest(endpoint: "account/\(accountId)/favorite/tv", page: page)
         }
     )
 
@@ -295,6 +307,77 @@ extension TMDBClient {
         }
 
         return try JSONDecoder().decode(ReviewsResponse.self, from: data)
+    }
+
+    private static func accountRequest() async throws -> Account {
+        guard let baseUrl = Bundle.main.infoDictionary?["MDB_BASE_URL"] as? String,
+              let token = Bundle.main.infoDictionary?["MDB_READ_API_KEY"] as? String else {
+            throw TMDBError.missingConfiguration
+        }
+
+        guard !token.isEmpty else {
+            throw TMDBError.missingConfiguration
+        }
+
+        guard let url = URL(string: "\(baseUrl)/account") else {
+            throw TMDBError.invalidURL
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.timeoutInterval = 10
+        request.allHTTPHeaderFields = [
+            "accept": "application/json",
+            "Authorization": "Bearer \(token)"
+        ]
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              (200...299).contains(httpResponse.statusCode) else {
+            throw TMDBError.httpError
+        }
+
+        return try JSONDecoder().decode(Account.self, from: data)
+    }
+
+    private static func favoritesRequest<T: Decodable>(endpoint: String, page: Int) async throws -> T {
+        guard let baseUrl = Bundle.main.infoDictionary?["MDB_BASE_URL"] as? String,
+              let token = Bundle.main.infoDictionary?["MDB_READ_API_KEY"] as? String else {
+            throw TMDBError.missingConfiguration
+        }
+
+        guard !token.isEmpty else {
+            throw TMDBError.missingConfiguration
+        }
+
+        guard let url = URL(string: "\(baseUrl)/\(endpoint)") else {
+            throw TMDBError.invalidURL
+        }
+
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
+        components.queryItems = [
+            URLQueryItem(name: "language", value: "en-US"),
+            URLQueryItem(name: "page", value: "\(page)"),
+            URLQueryItem(name: "sort_by", value: "created_at.asc")
+        ]
+
+        var request = URLRequest(url: components.url!)
+        request.httpMethod = "GET"
+        request.timeoutInterval = 10
+        request.allHTTPHeaderFields = [
+            "accept": "application/json",
+            "Authorization": "Bearer \(token)"
+        ]
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              (200...299).contains(httpResponse.statusCode) else {
+            throw TMDBError.httpError
+        }
+
+        return try JSONDecoder().decode(T.self, from: data)
     }
 }
 

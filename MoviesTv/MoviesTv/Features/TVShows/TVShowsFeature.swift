@@ -85,7 +85,8 @@ struct TVShowsFeature {
                         coverImagePath: tvShow.posterPath ?? "",
                         overview: tvShow.overview,
                         rating: tvShow.voteAverage,
-                        sizeClass: .medium
+                        sizeClass: .medium,
+                        mediaType: .tvShow
                     )
                 }
                 state.tvShowCards.append(contentsOf: newCards)

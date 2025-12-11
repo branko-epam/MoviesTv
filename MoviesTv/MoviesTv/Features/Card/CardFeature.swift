@@ -11,12 +11,18 @@ struct CardFeature {
         let overview: String
         let rating: Double
         let sizeClass: SizeClass
+        let mediaType: MediaType
         var coverUrl: URL? {
             guard let baseUrl = Bundle.main.infoDictionary?["MDB_IMG_URL"] as? String else {
                 return nil
             }
             return URL(string: baseUrl + coverImagePath)
         }
+    }
+
+    enum MediaType: Equatable {
+        case movie
+        case tvShow
     }
 
     enum SizeClass: Equatable {
@@ -42,7 +48,7 @@ struct CardFeature {
     var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
-            case .openDetails(let id):
+            case .openDetails:
                 return .none
             }
         }

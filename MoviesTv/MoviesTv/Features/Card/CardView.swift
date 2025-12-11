@@ -64,7 +64,8 @@ extension CardView {
                 coverImagePath: "/cVxVGwHce6xnW8UaVUggaPXbmoE.jpg",
                 overview: "When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and one strange little girl.",
                 rating: 8.6,
-                sizeClass: .large
+                sizeClass: .large,
+                mediaType: .tvShow
             )
         ) {
             CardFeature()

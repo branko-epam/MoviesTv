@@ -85,7 +85,8 @@ struct MoviesFeature {
                         coverImagePath: movie.posterPath ?? "",
                         overview: movie.overview,
                         rating: movie.voteAverage,
-                        sizeClass: .medium
+                        sizeClass: .medium,
+                        mediaType: .movie
                     )
                 }
                 state.movieCards.append(contentsOf: newCards)

@@ -1,4 +1,0 @@
-import ComposableArchitecture
-
-extension AppFeature {
-}
